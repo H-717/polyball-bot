@@ -1,0 +1,16 @@
+{
+  "event_id": "22138112",
+  "event_url": "https://www.ticketcorner.ch/en/event/polyball-confoederatio-polytechnica-eth-zuerich-22138112/",
+  "event_start": "2026-11-28T19:00",
+  "interval_seconds": 15,
+  "ntfy_topic": "",
+  "ticket_types": [
+    {"label": "Mit Legi", "ids": [70288316], "match": ["legi"], "face_value": 69.70},
+    {"label": "Regular", "ids": [70288318], "match": ["regular", "normal"], "face_value": 104.90},
+    {"label": "Gönner", "ids": [70292397], "match": ["gonner", "goenner"], "face_value": 502.90, "ignore": true},
+    {"label": "VIP", "ids": [70294488], "match": ["vip"]},
+    {"label": "Helfer", "ids": [70294487], "match": ["helfer"]},
+    {"label": "Freibillet", "ids": [70294486], "match": ["freibil"]}
+  ],
+  "heartbeat_hour": 9
+}
