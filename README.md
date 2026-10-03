@@ -37,9 +37,10 @@ Each run:
 4. backs off if Ticketcorner blocks it or the internet is down, and warns you after 10 minutes
 5. stops by itself once the ball has started
 
-## Setup on the Raspberry Pi
+## Setup
 
-Needs a Pi 4 or 5 with a 64-bit OS: `uname -m` must print `aarch64`.
+Runs anywhere Docker does: a Raspberry Pi, a home server or a VPS. On a Pi you need a Pi 4 or 5
+with a 64-bit OS (`uname -m` must print `aarch64`).
 
 Install Docker if it isn't installed yet:
 
@@ -48,18 +49,24 @@ curl -fsSL https://get.docker.com | sh
 sudo usermod -aG docker $USER      # then log out and back in
 ```
 
-Copy this folder to the Pi (e.g. `scp -r polyBall pi@raspberrypi.local:~/polyball-bot`), then:
+Then:
 
 ```
-cd ~/polyball-bot
+git clone https://github.com/H-717/polyball-bot.git
+cd polyball-bot
 mkdir -p data
 cp -n config.example.json data/config.json    # -n: keeps an existing config
-nano data/config.json              # check ntfy_topic, see Notifications
+nano data/config.json              # set ntfy_topic, see Notifications
 docker compose up -d --build
 docker compose run --rm polyball-bot python polyball_bot.py notify-test
 ```
 
+`ntfy_topic` is empty in the example config and the bot won't start without one. The first log
+line shows which topic(s) it notifies.
+
 The container starts again by itself after a reboot or crash (`restart: unless-stopped`).
+
+To update later: `git pull && docker compose up -d --build`. Your `data/` folder is untouched.
 
 ## Configuration
 
@@ -86,7 +93,7 @@ come from a table in the event page's HTML. For Polyball 2026 (price category "S
 | 70288318 | Regular price | face value CHF 104.90 |
 | 70288316 | Mit Legi | face value CHF 69.70 |
 | 70292397 | Gönner | `"ignore": true` |
-| 70294488 / 70294487 / 70294486 | VIP / Helfer / Freibilllet | notified, price not compared |
+| 70294488 / 70294487 / 70294486 | VIP / Helfer / Freibillet | notified, price not compared |
 
 Each `ticket_types` entry has a `label` (what the notification shows), `ids`, `match` (keywords
 for the ticket type name, used only if the ID is unknown), an optional `face_value` and an
@@ -98,9 +105,9 @@ for `ticketTypeNameById`.
 
 ## Notifications
 
-The bot pushes through [ntfy](https://ntfy.sh) (free, no account), the same as asvz-bot. A
-"topic" is a channel name: the bot publishes to it and your phone subscribes to it. Anyone who
-knows the name can read it, so use a long random one, not the ASVZ topic.
+The bot pushes through [ntfy](https://ntfy.sh) (free, no account). A "topic" is a channel name:
+the bot publishes to it and your phone subscribes to it. Anyone who knows the name can read it,
+so use a long random one and only share it privately.
 
 1. Generate a topic name:
    `python -c "import secrets; print('polyball-' + secrets.token_hex(10))"`
@@ -114,6 +121,11 @@ knows the name can read it, so use a long random one, not the ASVZ topic.
    override Do Not Disturb. On iPhone, allow ntfy notifications in the system settings.
 
 You can also check a topic in a browser at `https://ntfy.sh/<topic>`.
+
+**Running it for someone else:** put their topic in your `data/config.json`, and they get the
+alerts without running anything themselves. If several machines run the bot with the same topic,
+every offer arrives once per machine. That adds no delay, and the machines back each other up
+if one gets blocked.
 
 | message | priority |
 | --- | --- |
