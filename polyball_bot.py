@@ -286,6 +286,8 @@ def announce_offer(client, oid, summary):
 
 
 def cmd_run():
+    if not topics():
+        raise SystemExit("No ntfy_topic in config.json - nobody would be notified.")
     event_id = cfg["event_id"]
     interval = cfg.get("interval_seconds", 15)
     event_start = datetime.fromisoformat(cfg["event_start"]).replace(tzinfo=ZURICH) if cfg.get("event_start") else None
@@ -307,7 +309,8 @@ def cmd_run():
             time.sleep(86400)
 
     finished()
-    log(f"watching resale for event {event_id} every ~{interval}s ({len(listed)} offer(s) already known)")
+    log(f"watching resale for event {event_id} every ~{interval}s ({len(listed)} offer(s) already known), "
+        f"notifying {', '.join(topics())}")
     notify("Polyball bot online", f"Checking the Ticketcorner resale every ~{interval} s. "
            f"{len(listed)} offer(s) currently listed.", priority=2, tags=["white_check_mark"], click=event_url())
 
